@@ -1,7 +1,7 @@
 import allure
 import requests
 
-from Sprint_7.data import COURIER_LOGIN, COURIER
+from Sprint_7.data import COURIER_LOGIN, COURIER, COURIER_LOGIN_BAD_REQUEST, COURIER_LOGIN_NOT_FOUND
 
 
 class TestCourierLogin:
@@ -17,18 +17,18 @@ class TestCourierLogin:
         data = create_new_courier_and_delete_after_test
         requests.post(COURIER, json=data)
         response = requests.post(COURIER_LOGIN, json={"password": data['password']})
-        assert response.status_code == 400 and response.json()["message"] == "Недостаточно данных для входа"
+        assert response.status_code == 400 and response.json()["message"] == COURIER_LOGIN_BAD_REQUEST
 
     @allure.title("Тест проверяет, что курьер не может авторизоваться, если он ранее не был зарегистрирован")
     def test_courier_login_not_found(self, create_new_courier_and_delete_after_test):
         data = create_new_courier_and_delete_after_test
         response = requests.post(COURIER_LOGIN, json={"login": data['login'], "password": data['password']})
-        assert response.status_code == 404 and response.json()["message"] == "Учетная запись не найдена"
+        assert response.status_code == 404 and response.json()["message"] == COURIER_LOGIN_NOT_FOUND
 
     @allure.title("Тест проверяет, что если ввести верный логин и неверный пароль, авторизация не произойдет")
     def test_courier_login_invalid_password(self, create_new_courier_and_delete_after_test):
         data = create_new_courier_and_delete_after_test
         requests.post(COURIER, json=data)
         response = requests.post(COURIER_LOGIN, json={"login": data['login'], "password": 123})
-        assert response.status_code == 404 and response.json()["message"] == "Учетная запись не найдена"
+        assert response.status_code == 404 and response.json()["message"] == COURIER_LOGIN_NOT_FOUND
 

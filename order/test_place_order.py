@@ -2,7 +2,7 @@ import allure
 import pytest
 import requests
 
-from Sprint_7.data import ORDER_URL
+from Sprint_7.data import ORDER_URL, ORDER_DATA
 
 
 @pytest.mark.parametrize(
@@ -22,7 +22,8 @@ from Sprint_7.data import ORDER_URL
     ]
 )
 @allure.title("Тест проверяет создание заказа с разными значениями поля 'color'")
-def test_create_order(order_data, color, expected_code):
+def test_create_order(color, expected_code):
+    order_data = ORDER_DATA.copy()
     order_data["color"] = color or order_data.get("color")
     response = requests.post(ORDER_URL, json=order_data)
     response_data = response.json()
